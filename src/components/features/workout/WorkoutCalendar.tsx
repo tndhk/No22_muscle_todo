@@ -7,34 +7,26 @@ import { useState, useMemo } from 'react';
 
 export function WorkoutCalendar() {
   const { log, isLoading } = useWorkoutLog();
-  const [month, setMonth] = useState<Date>(new Date()); // 表示月を管理
+  const [month, setMonth] = useState<Date>(new Date());
 
   const completedDays = useMemo(() => {
     if (isLoading) return [];
 
     const dates = Object.keys(log)
       .filter(dateStr => {
-        // その日のログが全メニューを含んでいるかチェック
         const dailyLog = log[dateStr] || [];
         return WORKOUT_MENUS.every(menu => dailyLog.includes(menu));
       })
-      .map(dateStr => new Date(dateStr)); // Dateオブジェクトに変換
+      .map(dateStr => new Date(dateStr));
 
     return dates;
   }, [log, isLoading]);
 
-  // カスタム修飾子を定義
-  const modifiers = {
+  const modifiers: Record<string, Date[]> = {
     completed: completedDays,
   };
 
-  // classNames でカスタム修飾子のスタイルを指定 (一旦コメントアウト)
-  // const classNames: import('react-day-picker').ClassNames = {
-  //   ????_completed: "bg-green-500 text-primary-foreground rounded-full", // 正しいキー名が不明
-  // };
-
   if (isLoading) {
-    // ローディング中はカレンダーのスケルトン表示
     return (
       <div className="p-4 border rounded-md animate-pulse">
         <div className="flex justify-between mb-4">
@@ -57,7 +49,6 @@ export function WorkoutCalendar() {
       month={month}
       onMonthChange={setMonth}
       modifiers={modifiers}
-      // classNames={classNames} // 一旦コメントアウト
       showOutsideDays
       className="rounded-md border"
     />
